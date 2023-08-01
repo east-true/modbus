@@ -1,4 +1,4 @@
-module modbus
+module github.com/east-true/modbus
 
 go 1.20
 
