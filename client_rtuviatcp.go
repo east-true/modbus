@@ -12,15 +12,15 @@ import (
 	"time"
 )
 
-// RtuViaTCPClientHandler implements Packager and Transporter interface.
-type RtuViaTCPClientHandler struct {
+// RtuViaTcpClientHandler implements Packager and Transporter interface.
+type RtuViaTcpClientHandler struct {
 	rtuPackager
 	RtuViaTCPSerialTransporter
 }
 
-// NewRtuViaTCPClientHandler allocates a new RtuViaTCPClientHandler.
-func NewRtuViaTCPClientHandler(address string) *RtuViaTCPClientHandler {
-	h := &RtuViaTCPClientHandler{}
+// NewRtuViaTcpClientHandler allocates a new RtuViaTcpClientHandler.
+func NewRtuViaTcpClientHandler(address string) *RtuViaTcpClientHandler {
+	h := &RtuViaTcpClientHandler{}
 	h.Address = address
 	h.Timeout = tcpTimeout
 	h.IdleTimeout = tcpIdleTimeout
@@ -29,36 +29,23 @@ func NewRtuViaTCPClientHandler(address string) *RtuViaTCPClientHandler {
 
 // RtuViaTCPClient creates TCP client with default handler and given connect string.
 func RtuViaTCPClient(address string) Client {
-	handler := NewRtuViaTCPClientHandler(address)
+	handler := NewRtuViaTcpClientHandler(address)
 	return NewClient(handler)
 }
 
 // rtuSerialTransporter implements Transporter interface.
 type RtuViaTCPSerialTransporter struct {
-	// Connect string
-	Address string
-	// Connect & Read timeout
-	Timeout time.Duration
-	// Idle timeout to close the connection
+	Address     string
+	BaudRate    int
+	Timeout     time.Duration
 	IdleTimeout time.Duration
-	// Transmission logger
-	Logger *log.Logger
+	Logger      *log.Logger
 
 	// TCP connection
 	mu           sync.Mutex
 	conn         net.Conn
 	closeTimer   *time.Timer
 	lastActivity time.Time
-
-	// Baud rate (default 19200)
-	BaudRate int
-	// Data bits: 5, 6, 7 or 8 (default 8)
-	DataBits int
-	// Stop bits: 1 or 2 (default 1)
-	StopBits int
-	// Parity: N - None, E - Even, O - Odd (default E)
-	// (The use of no parity requires 2 stop bits.)
-	Parity string
 }
 
 func (mb *RtuViaTCPSerialTransporter) Send(aduRequest []byte) (aduResponse []byte, err error) {
@@ -99,7 +86,7 @@ func (mb *RtuViaTCPSerialTransporter) Send(aduRequest []byte) (aduResponse []byt
 	var data [rtuMaxSize]byte
 	//We first read the minimum length and then read either the full package
 	//or the error package, depending on the error status (byte 2 of the response)
-	if _, err = io.ReadFull(mb.conn, data[:rtuMinSize]); err != nil {
+	if n, err = io.ReadFull(mb.conn, data[:rtuMinSize]); err != nil {
 		mb.flush(data[:])
 		return
 	}
