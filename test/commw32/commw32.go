@@ -1,11 +1,12 @@
 // Copyright 2014 Quoc-Viet Nguyen. All rights reserved.
 // This software may be modified and distributed under the terms
 // of the BSD license.  See the LICENSE file for details.
+//go:build windows && cgo
 // +build windows,cgo
 
 // Port of commw32.c
 // To generate go types: go tool cgo commw32.go
-package main
+package modbus
 
 // #include <windows.h>
 import "C"
@@ -22,8 +23,8 @@ const port = "COM4"
 func main() {
 	handle, err := syscall.CreateFile(syscall.StringToUTF16Ptr(port),
 		syscall.GENERIC_READ|syscall.GENERIC_WRITE,
-		0,   // mode
-		nil, // security
+		0,                     // mode
+		nil,                   // security
 		syscall.OPEN_EXISTING, // no creating new
 		0,
 		0)

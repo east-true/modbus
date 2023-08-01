@@ -3,9 +3,9 @@
 // of the BSD license. See the LICENSE file for details.
 
 /*
-package main provides a client for MODBUS TCP and RTU/ASCII.
+package modbus provides a client for MODBUS TCP and RTU/ASCII.
 */
-package main
+package modbus
 
 import (
 	"fmt"
