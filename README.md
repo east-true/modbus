@@ -23,6 +23,7 @@ Supported formats
 -----------------
 *   TCP
 *   Serial (RTU, ASCII)
+*   RtuViaTcp
 
 Usage
 -----
